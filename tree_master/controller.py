@@ -35,8 +35,7 @@ class animator(Thread):
     def run(self):
         while self.enabled:
             if self.showing:
-                a = [80, 83, 86, 89, 92, 95, 98, 40, 43, 46, 49, 52, 55, 58, 0, 3, 6, 9, 12, 15, 18, 38, 35, 32, 29, 26, 23, 20, 78, 75, 72, 69, 66, 63, 60, 118, 115, 112, 109, 106, 103, 100] 
-                for i in a:
+                for i in xrange(0,80):
                     led.set_led_value(i, led.CONST_MAX_INTENSITY)
                     sleep(0.05)
                     if not self.showing:
@@ -56,20 +55,7 @@ function_list = [ ('button', 'Off', 'Select', True, 1, None),
                   ('plusminus', 'Ramp up: 20', None, None, 4, 5),
                   ('plusminus', 'Calm down: 2', None, None, 6, 7),
                   ('plusminus', 'Retention: 10', None, None, 8, 9),
-                  #('button', 'Power', 'off', False, 6, None)
                   ]
-
-#global onoff
-#onoff = False
-
-#def update_onoff(new_value):
-#    global onoff
-#    onoff = new_value
-#    global function_list
-#    elementType, nameL, nameR, highlighted, idPlus, idMinus = function_list[5]
-#    nameR = 'on' if onoff else 'off'
-#    highlighted = onoff
-#    function_list[5] = (elementType, nameL, nameR, highlighted, idPlus, idMinus)
 
 def update_ramp_up(new_value):
     global ramp_up

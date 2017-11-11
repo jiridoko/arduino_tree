@@ -26,3 +26,6 @@ My final setup has 120 LEDs (3x40), they're connected with 150 ohm resistors.
 * add python listening daemon over ethernet so it can be controlled from a network connected computer
 
 I will be pushing changes into it probably until Christmas 2017 (if I don't revisit this project later) - that is my deadline.
+
+Preview:
+https://www.youtube.com/watch?v=uR63yLqIU_s
