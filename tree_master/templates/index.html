@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+	{% for type, nameL, nameR, highlighted, idPlus, idMinus in function_list %}
+		{% if type=="button" %}
+			<tr>
+			  <td>{{ nameL }}</td>
+			  <td><button {% if  highlighted %}class="button-primary" {% endif %} onclick="window.location.href='/api/{{ idPlus }}/'">{{ nameR }}</button></td>
+			</tr>
+		{% elif type=="plusminus" %}
+			<tr>
+			  <td>{{ nameL }}</td>
+			  <td>
+			    <button onclick="window.location.href='/api/{{ idMinus }}'"><h5>-</h5></button>
+			    <button onclick="window.location.href='/api/{{ idPlus }}'"><h5>+</h5></button>
+			  </td>
+			</tr>
+		{% elif type=="text" %}
+			<tr>
+			  <td>{{ nameL }}</td>
+			  <td>{{ nameR }}</td>
+			</tr>
+		{% endif %}
+	{% endfor %}
+{% endblock %}
