@@ -1,0 +1,11 @@
+[Unit]
+Description=Christmas tree controller
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/opt/tree_controller/controller.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
