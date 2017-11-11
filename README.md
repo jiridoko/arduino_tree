@@ -10,7 +10,7 @@ For the Raspberry pi controller, I am making a python daemon with Flask web UI w
 
 Arduino connection - use this manual https://www.arduino.cc/en/Tutorial/ShiftOut
 
-Just change the clock pin to arduino's pin 13, latch pin is pin 10 and data serial is pin 11 - that way you can use the SPI output for much faster changes allowing an actual PWM output. Connect as many shift registers as you deem suitable, just remember to tune the specs in the arduino source code. I used the code from https://github.com/elcojacobs/ShiftPWM
+Just change the clock pin to arduino's pin 13, latch pin is pin 10 and data serial is pin 11 - that way you can use the SPI output for much faster changes allowing an actual PWM output. Connect as many shift registers as you deem suitable, just remember to tune the specs in the arduino source code. I used some external libraries from https://github.com/elcojacobs/ShiftPWM and https://github.com/scogswell/ArduinoSerialCommand
 
 My final setup has 120 LEDs (3x40), they're connected with 150 ohm resistors.
 

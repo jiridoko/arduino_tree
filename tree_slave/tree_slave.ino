@@ -19,6 +19,7 @@ const bool ShiftPWM_balanceLoad = false;
 #include <EEPROM.h>
 #include <SoftwareSerial.h>
 #include <SerialCommand.h>
+// Get it at https://github.com/scogswell/ArduinoSerialCommand
 
 SerialCommand SCmd;
 
