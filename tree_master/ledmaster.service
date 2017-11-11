@@ -4,7 +4,7 @@ After=network.target
 
 [Service]
 Type=simple
-ExecStart=/opt/tree_controller/controller.py
+ExecStart=/root/arduino_tree/tree_master/controller.py
 Restart=always
 
 [Install]
