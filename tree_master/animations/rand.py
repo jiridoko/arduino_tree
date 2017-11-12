@@ -1,10 +1,10 @@
 #!/usr/bin/env python2
 
 from time import sleep
-import animation
+import __animation
 from random import *
 
-class rand(animation.animation):
+class rand(__animation.animation):
     def __init__(self, led):
         super(rand, self).__init__(led)
     def run(self):
