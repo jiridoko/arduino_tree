@@ -29,6 +29,7 @@ class controller(object):
         self.MODE_LIST = [ ("off", "OFF"),
                       ("snake", "Snake"),
                       ("rand", "Random"),
+                      ("snow", "Snow"),
                     ]
 
         self.PLUSMINUS_LIST = [ ("ramp_up", "Ramp up: "),
