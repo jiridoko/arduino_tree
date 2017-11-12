@@ -3,14 +3,8 @@ from flask import Flask
 from flask import render_template
 from flask import send_from_directory
 from flask import redirect
-import sys
 import logging
-from threading import Thread
-from time import sleep
-from ledmaster import led_master
 from logging.handlers import RotatingFileHandler
-from value_store import storage
-from animator import animator
 from controller import controller
 
 app = Flask(__name__, static_url_path='')
@@ -30,7 +24,7 @@ def button(path):
     return redirect("/", code=302)
 
 if __name__ == '__main__':
-    handler = RotatingFileHandler('foo.log', maxBytes=10000, backupCount=1)
+    handler = RotatingFileHandler('controller.log', maxBytes=10000, backupCount=1)
     handler.setLevel(logging.INFO)
     app.logger.addHandler(handler)
     app.run(host="0.0.0.0", port=80)
