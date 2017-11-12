@@ -10,6 +10,9 @@ class animator(object):
 
     # sets animation, returns true if successful
     def set_animation(self, animation_name):
+        if animation_name is None:
+            self.stop_animation()
+            return self.animation is not None
         a = __import__("animations."+animation_name, globals(), locals(), [], -1)
         self.animation = getattr(getattr(a, animation_name), animation_name)(self.led)
         self.name = animation_name
@@ -25,3 +28,6 @@ class animator(object):
             del self.animation
             self.animation = None
             self.name = None
+
+    def get_animation_name(self):
+        return self.name

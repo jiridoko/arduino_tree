@@ -1,162 +1,98 @@
 #!/usr/bin/env python2
-from flask import Flask
-from flask import render_template
-from flask import send_from_directory
-from flask import redirect
-import sys
-import logging
-from threading import Thread
-from time import sleep
-from ledmaster import led_master
-from logging.handlers import RotatingFileHandler
-from value_store import storage
+
 from animator import animator
+from value_store import storage
+from ledmaster import led_master
+import sys
 
-app = Flask(__name__, static_url_path='')
+class controller(object):
 
-    #s = storage('test2.out')
-    #print str(s.get_value("test"))
-    #s.set_value("test", "val")
-    #print str(s.get_value("test"))
-    #s.set_value("test2", 56)
-    #print str(int(s.get_value("test2"))+2)
+    def __init__(self):
+        self.s = storage('config.ini')
+        self.led = led_master(ramp_up_speed=self._getint("ramp_up"), calm_down_speed=self._getint("calm_down"), retention=self._getint("retention"))
+        self.led.start()
+        self.ani = animator(self.led)
+        self._change_mode(self._getstr("mode"))
 
-global s
-s = storage('config.ini')
-if s.get_value("ramp_up") is None:
-    s.set_value("ramp_up", 20)
-if s.get_value("calm_down") is None:
-    s.set_value("calm_down", 2)
-if s.get_value("retention") is None:
-    s.set_value("retention", 10)
+        self.DEFAULT_RAMP_UP = 20
+        self.DEFAULT_CALM_DOWN = 2
+        self.DEFAULT_RETENTION = 10
+        self.DEFAULT_MODE = "off"
 
-led = led_master(ramp_up_speed=int(s.get_value("ramp_up")), calm_down_speed=int(s.get_value("calm_down")), retention=int(s.get_value("retention")))
+        self.RAMP_UP_MIN = 1
+        self.RAMP_UP_MAX = self.led.CONST_MAX_INTENSITY
+        self.CALM_DOWN_MIN = 1
+        self.CALM_DOWN_MAX = self.led.CONST_MAX_INTENSITY
+        self.RETENTION_MIN = 1
+        self.RETENTION_MAX = 1000
 
-ani = animator(led)
-led.start()
+        self.MODE_LIST = [ ("off", "OFF"),
+                      ("snake", "Snake"),
+                      ("rand", "Random"),
+                    ]
 
-global function_list
-# elementType, nameL, nameR, highlighted, idPlus, idMinus
-function_list = [ ('button', 'Off', 'Select', True, 1, None),
-                  ('button', 'Snake', 'Select', False, 2, None),
-                  ('button', 'Snowfall', 'Select', False, 3, None),
-                  ('plusminus', 'Ramp up: '+s.get_value("ramp_up"), None, None, 4, 5),
-                  ('plusminus', 'Calm down: '+s.get_value("calm_down"), None, None, 6, 7),
-                  ('plusminus', 'Retention: '+s.get_value("retention"), None, None, 8, 9),
-                  ]
+        self.PLUSMINUS_LIST = [ ("ramp_up", "Ramp up: "),
+                           ("calm_down", "Calm down: "),
+                           ("retention", "Retention: "),
+                         ]
 
-def update_ramp_up(new_value):
-    s.set_value("ramp_up", new_value)
-    led.set_ramp_up_speed(new_value)
-    global function_list
-    elementType, nameL, nameR, highlighted, idPlus, idMinus = function_list[3]
-    nameL = "Ramp up: "+str(new_value)
-    function_list[3] = (elementType, nameL, nameR, highlighted, idPlus, idMinus)
+    def _getint(self, name):
+        try:
+            i = int(self.s.get_value(name))
+            if i is None:
+                if name == "ramp_up":
+                    self.s.set_value("ramp_up", self.DEFAULT_RAMP_UP)
+                elif name == "calm_down":
+                    self.s.set_value("calm_down", self.DEFAULT_CALM_DOWN)
+                elif name == "retention":
+                    self.s.set_value("retention", self.DEFAULT_RETENTION)
+            return i
+        except ValueError:
+            return None
 
-def update_calm_down(new_value):
-    s.set_value("calm_down", new_value)
-    led.set_calm_down_speed(new_value)
-    global function_list
-    elementType, nameL, nameR, highlighted, idPlus, idMinus = function_list[4]
-    nameL = "Calm down: "+str(new_value)
-    function_list[4] = (elementType, nameL, nameR, highlighted, idPlus, idMinus)
+    def _getstr(self, name):
+        try:
+            i = str(self.s.get_value(name))
+            if i is None:
+                if name == "mode":
+                    self.s.set_value("mode", self.DEFAULT_MODE)
+            return i
+        except ValueError:
+            return None
 
-def update_retention(new_value):
-    s.set_value("retention", new_value)
-    led.set_retention(new_value)
-    global function_list
-    elementType, nameL, nameR, highlighted, idPlus, idMinus = function_list[5]
-    nameL = "Retention: "+str(new_value)
-    function_list[5] = (elementType, nameL, nameR, highlighted, idPlus, idMinus)
+    def _change_mode(self, mode_name):
+        self.ani.stop_animation()
+        self.ani.set_animation(mode_name)
+        self.ani.start_animation()
 
-def update_highlight(index, set_to):
-    global function_list
-    elementType, nameL, nameR, highlighted, idPlus, idMinus = function_list[index]
-    highlighted = set_to
-    function_list[index] = (elementType, nameL, nameR, highlighted, idPlus, idMinus)
+    def _change_attr(self, attr_name, attr_value):
+        if attr_name == "ramp_up" and attr_value >= self.RAMP_UP_MIN and attr_value <= self.RAMP_UP_MAX:
+            self.s.set_value(attr_name, attr_value)
+            self.led.set_ramp_up_speed(attr_value)
+        elif attr_name == "calm_down" and attr_value >= self.CALM_DOWN_MIN and attr_value <= self.CALM_DOWN_MAX:
+            self.s.set_value(attr_name, attr_value)
+            self.led.set_calm_down_speed(attr_value)
+        elif attr_name == "retention" and attr_value >= self.RETENTION_MIN and attr_value <= self.RETENTION_MAX:
+            self.s.set_value(attr_name, attr_value)
+            self.led.set_retention(attr_value)
 
-@app.route('/')
-def hello():
-    global function_list
-    return render_template('index.html', function_list=function_list)
+    def get_function_list(self):
+        l = []
+        for identifier, name in self.MODE_LIST:
+            l.append(('button', name, 'Select', self.ani.get_animation_name() == identifier, "mode_"+identifier, None))
+        for identifier, name in self.PLUSMINUS_LIST:
+            l.append(('plusminus', name+self._getstr(identifier), None, None, "value_"+identifier+"_plus", "value_"+identifier+"_minus"))
+        return l
 
-@app.route('/static/<path:path>')
-def serve_static(path):
-    return send_from_directory('static', path)
-
-@app.route('/api/<path:path>/')
-def button(path):
-    global function_list
-    if path == "1":
-        update_highlight(0, True)
-        update_highlight(1, False)
-        update_highlight(2, False)
-        ani.stop_animation()
-        s.set_value("mode", "off")
-    elif path == "2":
-        update_highlight(0, False)
-        update_highlight(1, True)
-        update_highlight(2, False)
-        ani.stop_animation()
-        ani.set_animation("snake")
-        ani.start_animation()
-        s.set_value("mode", "snake")
-    elif path == "3":
-        update_highlight(0, False)
-        update_highlight(1, False)
-        update_highlight(2, True)
-        ani.stop_animation()
-        ani.set_animation("rand")
-        ani.start_animation()
-        s.set_value("mode", "snow")
-    elif path == "4":
-        update_ramp_up(int(s.get_value("ramp_up"))+1)
-    elif path == "5":
-        update_ramp_up(int(s.get_value("ramp_up"))-1)
-    elif path == "6":
-        update_calm_down(int(s.get_value("calm_down"))+1)
-    elif path == "7":
-        update_calm_down(int(s.get_value("calm_down"))-1)
-    elif path == "8":
-        update_retention(int(s.get_value("retention"))+1)
-    elif path == "9":
-        update_retention(int(s.get_value("retention"))-1)
-    else:
-        update_highlight(0, False);
-        update_highlight(1, False);
-        update_highlight(2, False);
-    app.logger.info('Button pressed')
-    return redirect("/", code=302)
-
-if __name__ == '__main__':
-    handler = RotatingFileHandler('foo.log', maxBytes=10000, backupCount=1)
-    handler.setLevel(logging.INFO)
-    app.logger.addHandler(handler)
-    try:
-        program = s.get_value("mode", default=None)
-        if program == "off":
-            update_highlight(0, True)
-            update_highlight(1, False)
-            update_highlight(2, False)
-            ani.stop_animation()
-        elif program == "snake":
-            update_highlight(0, False)
-            update_highlight(1, True)
-            update_highlight(2, False)
-            ani.stop_animation()
-            ani.set_animation("snake")
-            ani.start_animation()
-        elif program == "snow":
-            update_highlight(0, False)
-            update_highlight(1, False)
-            update_highlight(2, True)
-            ani.stop_animation()
-            ani.set_animation("rand")
-            ani.start_animation()
-
-        app.run(host="0.0.0.0", port=80)
-    except KeyboardInterrupt:
-        print "interrupt"
-        ani.set_showing(False)
-        ani.disable()
-        led.set_updating(False)
+    def api_call(self, call):
+        for identifier, name in self.MODE_LIST:
+            if "mode_"+identifier == call:
+                self._change_mode(identifier)
+                break
+        for identifier, name in self.PLUSMINUS_LIST:
+            if "value_"+identifier+"_plus" == call:
+                self._change_attr(identifier, self._getint(identifier)+1)
+                break
+            elif "value_"+identifier+"_minus" == call:
+                self._change_attr(identifier, self._getint(identifier)-1)
+                break
