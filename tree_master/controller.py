@@ -10,6 +10,7 @@ from time import sleep
 from ledmaster import led_master
 from logging.handlers import RotatingFileHandler
 from value_store import storage
+from animator import animator
 
 app = Flask(__name__, static_url_path='')
 
@@ -31,30 +32,7 @@ if s.get_value("retention") is None:
 
 led = led_master(ramp_up_speed=int(s.get_value("ramp_up")), calm_down_speed=int(s.get_value("calm_down")), retention=int(s.get_value("retention")))
 
-class animator(Thread):
-    def __init__(self, led):
-        super(animator, self).__init__()
-        self.led = led
-        self.enabled = True
-        self.showing = False
-    def disable(self):
-        self.enabled = False
-    def set_showing(self, value):
-        self.showing = value
-        print "showing "+str(value)
-    def run(self):
-        while self.enabled:
-            if self.showing:
-                for i in xrange(0,80):
-                    led.set_led_value(i, led.CONST_MAX_INTENSITY)
-                    sleep(0.05)
-                    if not self.showing:
-                        break
-            else:
-                sleep(0.1)
-
 ani = animator(led)
-ani.start()
 led.start()
 
 global function_list
@@ -113,19 +91,23 @@ def button(path):
         update_highlight(0, True)
         update_highlight(1, False)
         update_highlight(2, False)
-        ani.set_showing(False)
+        ani.stop_animation()
         s.set_value("mode", "off")
     elif path == "2":
         update_highlight(0, False)
         update_highlight(1, True)
         update_highlight(2, False)
-        ani.set_showing(True)
+        ani.stop_animation()
+        ani.set_animation("snake")
+        ani.start_animation()
         s.set_value("mode", "snake")
     elif path == "3":
         update_highlight(0, False)
         update_highlight(1, False)
         update_highlight(2, True)
-        ani.set_showing(False)
+        ani.stop_animation()
+        ani.set_animation("rand")
+        ani.start_animation()
         s.set_value("mode", "snow")
     elif path == "4":
         update_ramp_up(int(s.get_value("ramp_up"))+1)
@@ -156,17 +138,21 @@ if __name__ == '__main__':
             update_highlight(0, True)
             update_highlight(1, False)
             update_highlight(2, False)
-            ani.set_showing(False)
+            ani.stop_animation()
         elif program == "snake":
             update_highlight(0, False)
             update_highlight(1, True)
             update_highlight(2, False)
-            ani.set_showing(True)
+            ani.stop_animation()
+            ani.set_animation("snake")
+            ani.start_animation()
         elif program == "snow":
             update_highlight(0, False)
             update_highlight(1, False)
             update_highlight(2, True)
-            ani.set_showing(False)
+            ani.stop_animation()
+            ani.set_animation("rand")
+            ani.start_animation()
 
         app.run(host="0.0.0.0", port=80)
     except KeyboardInterrupt:
