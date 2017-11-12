@@ -15,12 +15,10 @@ class snow(__animation.animation):
         if len(self.snowflakes) < self.MAX_SNOWFLAKES:
             self.snowflakes.append(self.master_snowflake)
     def _move_snowflakes(self):
+        newlist = [x for x in self.snowflakes if not x.is_leaf()]
+        self.snowflakes = newlist
         for i in xrange(0,len(self.snowflakes)):
-            next_snowflake = self.snowflakes[i].next_leaf()
-            if next_snowflake is None:
-                self.snowflakes.remove(self.snowflakes[i])
-                continue
-            self.snowflakes[i] = next_snowflake
+            self.snowflakes[i] = self.snowflakes[i].next_leaf()
     def run(self):
         counter = 0
         while self.enabled:

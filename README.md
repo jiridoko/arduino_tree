@@ -19,11 +19,15 @@ My final setup has 120 LEDs (3x40), they're connected with 150 ohm resistors.
 * arduino has primitive serial control interface that allows I2C ID setup
 * basic raspberry pi python control daemon
 * raspberry pi has a ledmaster control class that abstracts all the low level I2C calls and adds something like a video buffer
+* rewritten snowing simulator from embedded C to python
+* animation templating
 
 *Planned features:*
-* rewrite snowing simulator from embedded C to python
-* add more effects
+* add more animations
 * add python listening daemon over ethernet so it can be controlled from a network connected computer
+* move numerical attributes to end animations (and store them per animation)
+* variable count of attributes
+* timer turning the flashing animations on and off according to time
 
 I will be pushing changes into it probably until Christmas 2017 (if I don't revisit this project later) - that is my deadline.
 
