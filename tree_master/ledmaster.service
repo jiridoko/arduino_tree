@@ -4,6 +4,7 @@ After=network.target
 
 [Service]
 Type=simple
+WorkingDirectory=/root/arduino_tree/tree_master/
 ExecStart=/root/arduino_tree/tree_master/controller.py
 Restart=always
 
