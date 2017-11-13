@@ -27,13 +27,13 @@ class led_master(Thread):
         self.updating = value
 
     def set_ramp_up_speed(self, value):
-        self.ramp_up_speed = value
+        self.ramp_up_speed = int(value)
 
     def set_calm_down_speed(self, value):
-        self.calm_down_speed = value
+        self.calm_down_speed = int(value)
 
     def set_retention(self, value):
-        self.retention = value
+        self.retention = int(value)
 
     def set_led_value(self, led_id, intensity, retention=-1):
         if led_id < self.CONST_LED_COUNT:
