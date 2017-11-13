@@ -7,5 +7,8 @@ class animation(Thread):
         super(animation, self).__init__()
         self.led = led
         self.enabled = True
+        self.arguments = {}
     def disable(self):
         self.enabled = False
+    def _add_argument(self, arg_name):
+        pass
