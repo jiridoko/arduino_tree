@@ -33,18 +33,18 @@ class storage(object):
             dict1[section] = None
         return dict1
 
-    def set_value(self, name, value):
+    def set_value(self, name, value, section="main"):
         try:
-            options = self.c.options("main")
+            options = self.c.options(section)
         except:
-            self.c.add_section("main")
-        self.c.set("main", name, str(value))
+            self.c.add_section(section)
+        self.c.set(section, name, str(value))
         self._store()
 
-    def get_value(self, name, default=None):
+    def get_value(self, name, default=None, section="main"):
         retval = default
         try:
-            retval = self._ConfigSectionMap("main")[name]
+            retval = self._ConfigSectionMap(section)[name]
         except KeyError:
             return default
         return retval

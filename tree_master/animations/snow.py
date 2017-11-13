@@ -5,8 +5,8 @@ import __animation
 from random import randint
 
 class snow(__animation.animation):
-    def __init__(self, led):
-        super(snow, self).__init__(led)
+    def __init__(self, led, storage):
+        super(snow, self).__init__(led, storage, "snow")
         self.master_snowflake = None
         self._initialize_snowflakes()
         self.snowflakes = []

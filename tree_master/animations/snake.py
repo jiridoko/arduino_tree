@@ -4,8 +4,8 @@ from time import sleep
 import __animation
 
 class snake(__animation.animation):
-    def __init__(self, led):
-        super(snake, self).__init__(led)
+    def __init__(self, led, storage):
+        super(snake, self).__init__(led, storage, "snake")
     def run(self):
         while self.enabled:
             for i in xrange(0,80):
