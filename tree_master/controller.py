@@ -36,6 +36,7 @@ class controller(object):
         self.ani.stop_animation()
         self.ani.set_animation(mode_name)
         self.ani.start_animation()
+        self.s.set_value("mode", mode_name)
 
     def get_function_list(self):
         l = []
