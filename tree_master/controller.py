@@ -55,5 +55,5 @@ class controller(object):
                 self.ani.get_animation().set_argument(identifier, int(self.ani.get_animation().get_argument(identifier))+1)
                 break
             elif "value_"+identifier+"_minus" == call:
-                self.ani.get_animation().set_argument(identifier, self.ani.get_animation().get_argument(identifier)-1)
+                self.ani.get_animation().set_argument(identifier, int(self.ani.get_animation().get_argument(identifier))-1)
                 break
