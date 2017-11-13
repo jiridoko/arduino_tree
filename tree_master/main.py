@@ -3,6 +3,7 @@ from flask import Flask
 from flask import render_template
 from flask import send_from_directory
 from flask import redirect
+from flask import abort
 import logging
 from logging.handlers import RotatingFileHandler
 from controller import controller
@@ -22,6 +23,13 @@ def serve_static(path):
 def button(path):
     control.api_call(path)
     return redirect("/", code=302)
+    
+@app.route('/direct/<path:path>/')
+def direct(path):
+    if control.direct_call(path):
+        return ('', 204)
+    else:
+        return abort(404)
 
 if __name__ == '__main__':
     handler = RotatingFileHandler('controller.log', maxBytes=10000, backupCount=1)

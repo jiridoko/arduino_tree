@@ -20,6 +20,7 @@ class controller(object):
                       ("snake", "Snake"),
                       ("rand", "Random"),
                       ("snow", "Snow"),
+                      ("direct", "Direct"),
                     ]
 
     def _getstr(self, name):
@@ -58,3 +59,10 @@ class controller(object):
             elif "value_"+identifier+"_minus" == call:
                 self.ani.get_animation().set_argument(identifier, int(self.ani.get_animation().get_argument(identifier))-1)
                 break
+
+    def direct_call(self, data):
+        if self.ani.get_animation().get_name() == "direct":
+            self.ani.get_animation().direct_call(data)
+            return True
+        else:
+            return False

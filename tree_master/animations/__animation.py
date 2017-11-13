@@ -27,6 +27,8 @@ class animation(Thread):
             self.led.set_retention(self.get_argument("retention"))
     def disable(self):
         self.enabled = False
+    def get_name(self):
+        return self.animation_name
     def initialize_argument(self, arg_name, human_readable, default_value=None):
         self.arguments.append((arg_name, human_readable))
         if self.storage.get_value(arg_name, section=self.animation_name) is None:
