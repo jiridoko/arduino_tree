@@ -8,4 +8,5 @@ class direct(__animation.animation):
     def run(self):
         pass
     def direct_call(self, data):
+        print "got a direct dall with data:\""+str(data)+"\""
         pass
