@@ -1,5 +1,6 @@
 #!/usr/bin/env python2
 
+import base64
 import __animation
 
 class direct(__animation.animation):
@@ -8,5 +9,8 @@ class direct(__animation.animation):
     def run(self):
         pass
     def direct_call(self, data):
-        print "got a direct dall with data:\""+str(data)+"\""
-        pass
+        # format: base64_encode("<led_id>;<intensity>|<led_id>;<intensity>| ... ")
+        decoded = base64.standard_b64decode(data)
+        array = map(lambda x: x.split(";"), decoded.split("|"))
+        for led_id, intensity in array:
+            self.led.set_unbuffered(int(led_id), int(intensity))

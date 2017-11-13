@@ -45,6 +45,10 @@ class led_master(Thread):
                 self.retention_array[led_id] = retention
             self.semaphore_array[led_id].release()
 
+    def set_unbuffered(self, led_id, intensity):
+        if led_id < self.CONST_LED_COUNT:
+            self._signal_led(led_id, self._safe_intensity(intensity))
+
     def _initialize_semaphore_array(self):
         for i in xrange(0, self.CONST_LED_COUNT):
             self.semaphore_array.append(Semaphore())
