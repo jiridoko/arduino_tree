@@ -10,6 +10,14 @@ class animation(Thread):
         self.enabled = True
         self.arguments = []
         self.animation_name = name
+        
+        self.RAMP_UP_MIN = 1
+        self.RAMP_UP_MAX = self.led.CONST_MAX_INTENSITY
+        self.CALM_DOWN_MIN = 1
+        self.CALM_DOWN_MAX = self.led.CONST_MAX_INTENSITY
+        self.RETENTION_MIN = 1
+        self.RETENTION_MAX = 1000
+        
         if not blank_args:
             self.initialize_argument("ramp_up", default_value=20)
             self.led.set_ramp_up_speed(self.get_argument("ramp_up"))
@@ -25,6 +33,18 @@ class animation(Thread):
             self.storage.set_value(arg_name, default_value, section=self.animation_name)
     def set_argument(self, arg_name, arg_value):
         if arg_name in self.arguments:
+            if arg_name == "ramp_up" and arg_value >= self.RAMP_UP_MIN and arg_value <= self.RAMP_UP_MAX:
+                self.led.set_ramp_up_speed(arg_value)
+            elif arg_name == "ramp_up":
+                return
+            elif arg_name == "calm_down" and arg_value >= self.CALM_DOWN_MIN and arg_value <= self.CALM_DOWN_MAX:
+                self.led.set_calm_down_speed(arg_value)
+            elif arg_name == "calm_down":
+                return
+            elif arg_name == "retention" and arg_value >= self.RETENTION_MIN and arg_value <= self.RETENTION_MAX:
+                self.led.set_retention(arg_value)
+            elif arg_name == "retention":
+                return
             self.storage.set_value(arg_name, arg_value, section=self.animation_name)
     def get_argument_list(self):
         return self.arguments
@@ -33,12 +53,3 @@ class animation(Thread):
             return self.storage.get_value(arg_name, section=self.animation_name)
         else:
             return None
-    def set_ramp_up(self, value):
-        if "ramp_up" in self.arguments:
-            self.set_argument("ramp_up", value)
-            self.led.set_ramp_up_speed(value)
-    def set_calm_down(self, value):
-        if "calm_down" in self.arguments:
-            self.set_argument("calm_down", value)
-            self.led.set_calm_down_speed(value)
-    
