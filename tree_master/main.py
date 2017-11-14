@@ -32,6 +32,8 @@ def direct(path):
         return abort(404)
 
 if __name__ == '__main__':
+    log = logging.getLogger('werkzeug')
+    log.setLevel(logging.ERROR)
     handler = RotatingFileHandler('controller.log', maxBytes=10000, backupCount=1)
     handler.setLevel(logging.INFO)
     app.logger.addHandler(handler)
