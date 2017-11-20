@@ -31,7 +31,7 @@ const unsigned char maxBrightness = 63;
 const unsigned char pwmFrequency = 60;
 const int numRegisters = LEDCOUNT;
 
-byte buf[LEDCOUNT]
+byte buf[LEDCOUNT];
 
 void(* resetBoard) (void) = 0;
 
