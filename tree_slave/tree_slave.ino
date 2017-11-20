@@ -31,6 +31,8 @@ const unsigned char maxBrightness = 63;
 const unsigned char pwmFrequency = 60;
 const int numRegisters = LEDCOUNT;
 
+byte buf[LEDCOUNT]
+
 void(* resetBoard) (void) = 0;
 
 byte getI2CID() {
@@ -66,6 +68,9 @@ void pulseAll() {
 }
 
 void setup(){
+  for (int i=0; i<LEDCOUNT; ++i)
+    buf[i]=0;
+
   Serial.begin(115200);
 
   Serial.println("PWM 40 LED controller initializing");
@@ -148,14 +153,21 @@ void receiveEvent(int len) {
     for (int i=0; i < (len / 2); ++i) {
       byte ledID = Wire.read();
       byte intensity = Wire.read();
-      if (ledID == 0xFF && intensity == 0xFF)
-        serialResetCommand();
       if (ledID < LEDCOUNT)
-        ShiftPWM.SetOne(ledID, intensity);
+        buf[ledID] = intensity;
+      else if (ledID == 0xFF && intensity == 0xFF)
+        serialResetCommand();
     }
   }
 }
 
+void updateAll() {
+  for (int i=0; i<LEDCOUNT; ++i) {
+    ShiftPWM.SetOne(i, buf[i]);
+  }
+}
+
 void loop() {
+  updateAll();
   SCmd.readSerial();
 }
