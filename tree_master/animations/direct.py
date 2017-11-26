@@ -1,7 +1,7 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 
 import base64
-import __animation
+from . import __animation
 
 class direct(__animation.animation):
     def __init__(self, led, storage):

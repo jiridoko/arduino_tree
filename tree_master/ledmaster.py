@@ -1,5 +1,5 @@
-#!/usr/bin/env python2.7
-from smbus import SMBus
+#!/usr/bin/env python3
+from pyftdi.i2c import *
 from threading import Thread
 from threading import Semaphore
 
@@ -10,9 +10,10 @@ class led_master(Thread):
     CONST_CONTROLLER3_ID = 13
     CONST_MAX_INTENSITY = 63
 
-    def __init__(self, bus_id=1, ramp_up_speed=20, calm_down_speed=2, retention=0):
+    def __init__(self, ramp_up_speed=20, calm_down_speed=2, retention=0):
         super(led_master, self).__init__()
-        self.bus = SMBus(bus_id)
+        self.bus = I2cController()
+        self.bus.configure('ftdi://ftdi:232h/1', frequency=400000)
         self.ramp_up_speed = ramp_up_speed
         self.calm_down_speed = calm_down_speed
         self.retention = retention
@@ -57,7 +58,7 @@ class led_master(Thread):
             self.semaphore_array[led_id].release()
 
     def _initialize_semaphore_array(self):
-        for i in xrange(0, self.CONST_LED_COUNT):
+        for i in range(0, self.CONST_LED_COUNT):
             self.semaphore_array.append(Semaphore())
 
     def _safe_intensity(self, intensity):
@@ -78,39 +79,31 @@ class led_master(Thread):
 
     def _i2c_write_long_data(self, seq_num, data):
         if len(data) > 1:
-            tries = 3
-            while tries > 0:
-                try:
-                    self.bus.write_i2c_block_data(self._get_controller_id(seq_num), data[0], data[1:])
-                    tries = 0
-                except IOError:
-                    tries -= 1
-                except OverflowError:
-                    print "OVERFLOW!"
-                    print "array length "+str(len(data[1:]))
-            if tries < 0:
-                print "[i2c] address "+str(self._get_controller_id(seq_num))+" unreachable"
+            try:
+                self.bus.write(self._get_controller_id(seq_num), data)
+            except:
+                print("[i2c] address "+str(self._get_controller_id(seq_num))+" unreachable")
 
     def _i2c_send_bulk_data(self, seq_num, data):
         l = len(data)
         if l>1:
-            for i in xrange(0, (l/32)+1):
+            for i in range(0, (l//32)+1):
                 try:
                     if i < l/32:
                         self._i2c_write_long_data(seq_num, data[i*32:(i*32)+32])
                     else:
                         self._i2c_write_long_data(seq_num, data[i*32:])
                 except IndexError as e:
-                    print "IndexError!"
-                    print "data: "+str(data)
-                    print "data["+str(i*32)+":"+str((i*32)+32)+"]"
-                    print "i: "+str(i)
+                    print("IndexError!")
+                    print("data: "+str(data))
+                    print("data["+str(i*32)+":"+str((i*32)+32)+"]")
+                    print("i: "+str(i))
                     raise e
     def run(self):
         while self.updating:
-            for j in xrange(0,3):
+            for j in range(0,3):
                 buf = []
-                for i in xrange(j*40, (j*40)+40):
+                for i in range(j*40, (j*40)+40):
                     update = False
                     self.semaphore_array[i].acquire()
                     if self.direct:
@@ -149,8 +142,8 @@ if __name__ == "__main__":
 
         sleep(1)
 
-        for i in xrange(0, 20):
-            for j in xrange(0, 80):
+        for i in range(0, 20):
+            for j in range(0, 80):
                 l.set_led_value(j, l.CONST_MAX_INTENSITY)
                 sleep(0.05)
         sleep(2)

@@ -36,3 +36,7 @@ I will be pushing changes into it probably until Christmas 2017 (if I don't revi
 https://www.youtube.com/watch?v=uR63yLqIU_s
 
 https://www.youtube.com/watch?v=8a29PguKqx4
+
+*Update 1:*
+
+As it turns out, Raspberry pi I2C module has a hardware bug http://www.advamation.com/knowhow/raspberrypi/rpi-i2c-bug.html and there is no quick and dependable solution how to fix it. Since all the LED controller arduinos already do use their SPI output (ShiftPWM), the only real data bus I can use is I2C. So I decided to add one more arduino that will be connected over SPI to the raspberry pi and over I2C to the slave arduinos. This new arduino will be doing SPI->I2C relay. What it receives over SPI, it decodes where to send it and sends it over I2C.
