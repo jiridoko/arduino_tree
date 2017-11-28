@@ -2,6 +2,7 @@
 from pyftdi.i2c import *
 from threading import Thread
 from threading import Semaphore
+import time
 
 class led_master(Thread):
     CONST_LED_COUNT = 120
@@ -13,7 +14,7 @@ class led_master(Thread):
     def __init__(self, ramp_up_speed=20, calm_down_speed=2, retention=0):
         super(led_master, self).__init__()
         self.bus = I2cController()
-        self.bus.configure('ftdi://ftdi:232h/1', frequency=400000)
+        self.bus.configure('ftdi://ftdi:232h/1')
         self.ramp_up_speed = ramp_up_speed
         self.calm_down_speed = calm_down_speed
         self.retention = retention
@@ -26,6 +27,19 @@ class led_master(Thread):
         self._initialize_semaphore_array()
         self.updating = True
         self.array = range(0,40)
+        self.sum = 0.00
+        self.count = 0
+        self.i2c_slaves = [ self.bus.get_port(self.CONST_CONTROLLER1_ID), self.bus.get_port(self.CONST_CONTROLLER2_ID), self.bus.get_port(self.CONST_CONTROLLER3_ID) ]
+
+    def _add_sample(self, sample):
+        self.sum += sample
+        self.count += 1
+
+    def _show_avg(self):
+        if self.count > 0 and self.count % 100 == 0:
+            print("avg: "+str(self.sum/self.count)+"s")
+            print("clk freq: "+str(self.bus.frequency))
+            print("clk max_freq: "+str(self.bus.frequency_max))
 
     def set_updating(self, value):
         self.updating = value
@@ -77,10 +91,18 @@ class led_master(Thread):
         elif seq_num == 2:
             return self.CONST_CONTROLLER3_ID
 
+    def _get_controller(self, seq_num):
+        return self.i2c_slaves[seq_num]
+
     def _i2c_write_long_data(self, seq_num, data):
         if len(data) > 1:
             try:
-                self.bus.write(self._get_controller_id(seq_num), data)
+                t1=float(time.time())
+                #self.bus.write(self._get_controller_id(seq_num), data)
+                self._get_controller(seq_num).write(data)
+                t2=float(time.time())
+                self._add_sample(t2-t1)
+                self._show_avg()
             except:
                 print("[i2c] address "+str(self._get_controller_id(seq_num))+" unreachable")
 
@@ -89,7 +111,7 @@ class led_master(Thread):
         if l>1:
             for i in range(0, (l//32)+1):
                 try:
-                    if i < l/32:
+                    if i < l//32:
                         self._i2c_write_long_data(seq_num, data[i*32:(i*32)+32])
                     else:
                         self._i2c_write_long_data(seq_num, data[i*32:])
