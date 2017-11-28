@@ -1,12 +1,12 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 
-import ConfigParser
+import configparser
 import os
 
 class storage(object):
     def __init__(self, filename):
         self.filename = filename
-        self.c = ConfigParser.ConfigParser()
+        self.c = configparser.ConfigParser()
         self._load()
 
     def _load(self):
@@ -25,7 +25,6 @@ class storage(object):
                 try:
                     dict1[option] = self.c.get(section, option)
                     if dict1[option] == -1:
-                        #print "skip: %s" % option
                         pass
                 except:
                     dict1[option] = None
@@ -51,8 +50,8 @@ class storage(object):
 
 if __name__ == "__main__":
     s = storage('test2.out')
-    print str(s.get_value("test"))
+    print(str(s.get_value("test")))
     s.set_value("test", "val")
-    print str(s.get_value("test"))
+    print(str(s.get_value("test")))
     s.set_value("test2", 56)
-    print str(int(s.get_value("test2"))+2)
+    print(str(int(s.get_value("test2"))+2))

@@ -1,7 +1,7 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 
 from time import sleep
-import __animation
+from . import __animation
 from random import *
 
 class rand(__animation.animation):

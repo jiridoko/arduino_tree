@@ -1,6 +1,7 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 
 from threading import Thread
+import importlib
 
 class animator(object):
     def __init__(self, led, storage):
@@ -14,7 +15,7 @@ class animator(object):
         if animation_name is None:
             self.stop_animation()
             return self.animation is not None
-        a = __import__("animations."+animation_name, globals(), locals(), [], -1)
+        a = __import__("animations."+animation_name, globals(), locals(), [], 0)
         self.animation = getattr(getattr(a, animation_name), animation_name)(self.led, self.storage)
         self.name = animation_name
         return self.animation is not None

@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 from flask import Flask
 from flask import render_template
 from flask import send_from_directory

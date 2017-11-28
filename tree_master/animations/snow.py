@@ -1,7 +1,7 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 
 from time import sleep
-import __animation
+from . import __animation
 from random import randint
 
 class snow(__animation.animation):
@@ -17,7 +17,7 @@ class snow(__animation.animation):
     def _move_snowflakes(self):
         newlist = [x for x in self.snowflakes if not x.is_leaf()]
         self.snowflakes = newlist
-        for i in xrange(0,len(self.snowflakes)):
+        for i in range(len(self.snowflakes)):
             self.snowflakes[i] = self.snowflakes[i].next_leaf()
     def run(self):
         counter = 0

@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 
 from animator import animator
 from value_store import storage
@@ -21,6 +21,7 @@ class controller(object):
                       ("rand", "Random"),
                       ("snow", "Snow"),
                       ("direct", "Direct"),
+                      ("low", "Low mode"),
                     ]
 
     def _getstr(self, name):
