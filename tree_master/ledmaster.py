@@ -16,6 +16,7 @@ class led_master(Thread):
         self.bus = spidev.SpiDev()
         self.bus.open(0, 0)
         self.bus.max_speed_hz = 150000
+        self.bus.writebytes([0xFF, 0xFF, 0xFF])
         self.ramp_up_speed = ramp_up_speed
         self.calm_down_speed = calm_down_speed
         self.retention = retention
