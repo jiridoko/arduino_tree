@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from pyftdi.i2c import *
+import spidev
 from threading import Thread
 from threading import Semaphore
 import time
@@ -13,8 +13,9 @@ class led_master(Thread):
 
     def __init__(self, ramp_up_speed=20, calm_down_speed=2, retention=0):
         super(led_master, self).__init__()
-        self.bus = I2cController()
-        self.bus.configure('ftdi://ftdi:232h/1')
+        self.bus = spidev.SpiDev()
+        self.bus.open(0, 0)
+        self.bus.max_speed_hz = 150000
         self.ramp_up_speed = ramp_up_speed
         self.calm_down_speed = calm_down_speed
         self.retention = retention
@@ -29,7 +30,6 @@ class led_master(Thread):
         self.array = range(0,40)
         self.sum = 0.00
         self.count = 0
-        self.i2c_slaves = [ self.bus.get_port(self.CONST_CONTROLLER1_ID), self.bus.get_port(self.CONST_CONTROLLER2_ID), self.bus.get_port(self.CONST_CONTROLLER3_ID) ]
 
     def _add_sample(self, sample):
         self.sum += sample
@@ -38,8 +38,6 @@ class led_master(Thread):
     def _show_avg(self):
         if self.count > 0 and self.count % 100 == 0:
             print("avg: "+str(self.sum/self.count)+"s")
-            print("clk freq: "+str(self.bus.frequency))
-            print("clk max_freq: "+str(self.bus.frequency_max))
 
     def set_updating(self, value):
         self.updating = value
@@ -91,65 +89,34 @@ class led_master(Thread):
         elif seq_num == 2:
             return self.CONST_CONTROLLER3_ID
 
-    def _get_controller(self, seq_num):
-        return self.i2c_slaves[seq_num]
+    def _write_spi_data(self, diode_id, intensity):
+        self.bus.writebytes([diode_id, intensity, 0xFF])
 
-    def _i2c_write_long_data(self, seq_num, data):
-        if len(data) > 1:
-            try:
-                t1=float(time.time())
-                #self.bus.write(self._get_controller_id(seq_num), data)
-                self._get_controller(seq_num).write(data)
-                t2=float(time.time())
-                self._add_sample(t2-t1)
-                self._show_avg()
-            except:
-                print("[i2c] address "+str(self._get_controller_id(seq_num))+" unreachable")
-
-    def _i2c_send_bulk_data(self, seq_num, data):
-        l = len(data)
-        if l>1:
-            for i in range(0, (l//32)+1):
-                try:
-                    if i < l//32:
-                        self._i2c_write_long_data(seq_num, data[i*32:(i*32)+32])
-                    else:
-                        self._i2c_write_long_data(seq_num, data[i*32:])
-                except IndexError as e:
-                    print("IndexError!")
-                    print("data: "+str(data))
-                    print("data["+str(i*32)+":"+str((i*32)+32)+"]")
-                    print("i: "+str(i))
-                    raise e
     def run(self):
         while self.updating:
-            for j in range(0,3):
-                buf = []
-                for i in range(j*40, (j*40)+40):
-                    update = False
-                    self.semaphore_array[i].acquire()
-                    if self.direct:
-                        # Direct buffer access
-                        if self.current_array[i] != self.direct_array[i]:
-                            update = True
-                            self.current_array[i] = self.direct_array[i]
-                    else:
-                        # Easy buffer access
-                        if self.buffer_array[i] > 0: # we're ramping up
-                            self.current_array[i] = self._safe_intensity(self.current_array[i] + self.ramp_up_speed)
-                            self.buffer_array[i] = self._safe_intensity(self.buffer_array[i] - self.ramp_up_speed)
-                            update = True # we need to update this LED
-                        elif self.retention_array[i] > 0:
-                            self.retention_array[i]-=1
-                        elif self.calm_down_speed > 0 and self.buffer_array[i] == 0 and self.current_array[i] > 0: # we're calming down
-                            self.current_array[i] = self._safe_intensity(self.current_array[i] - self.calm_down_speed)
-                            update = True
+            for i in range(0,120):
+                update = False
+                self.semaphore_array[i].acquire()
+                if self.direct:
+                    # Direct buffer access
+                    if self.current_array[i] != self.direct_array[i]:
+                        update = True
+                        self.current_array[i] = self.direct_array[i]
+                else:
+                    # Easy buffer access
+                    if self.buffer_array[i] > 0: # we're ramping up
+                        self.current_array[i] = self._safe_intensity(self.current_array[i] + self.ramp_up_speed)
+                        self.buffer_array[i] = self._safe_intensity(self.buffer_array[i] - self.ramp_up_speed)
+                        update = True # we need to update this LED
+                    elif self.retention_array[i] > 0:
+                        self.retention_array[i]-=1
+                    elif self.calm_down_speed > 0 and self.buffer_array[i] == 0 and self.current_array[i] > 0: # we're calming down
+                        self.current_array[i] = self._safe_intensity(self.current_array[i] - self.calm_down_speed)
+                        update = True
 
-                    if update:
-                        buf.append(i%40)
-                        buf.append(self.current_array[i])
-                    self.semaphore_array[i].release()
-                self._i2c_send_bulk_data(j, buf)
+                if update:
+                    self._write_spi_data(i, self.current_array[i])
+                self.semaphore_array[i].release()
 
 if __name__ == "__main__":
     from time import sleep
