@@ -35,10 +35,13 @@ class controller(object):
             return None
 
     def _change_mode(self, mode_name):
+        mode = mode_name
+        if mode_name == "None":
+            mode = "off"
         self.ani.stop_animation()
-        self.ani.set_animation(mode_name)
+        self.ani.set_animation(mode)
         self.ani.start_animation()
-        self.s.set_value("mode", mode_name)
+        self.s.set_value("mode", mode)
 
     def get_function_list(self):
         l = []

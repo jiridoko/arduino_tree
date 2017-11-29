@@ -28,7 +28,7 @@ class storage(object):
                         pass
                 except:
                     dict1[option] = None
-        except ConfigParser.NoSectionError:
+        except configparser.NoSectionError:
             dict1[section] = None
         return dict1
 
