@@ -40,3 +40,7 @@ https://www.youtube.com/watch?v=8a29PguKqx4
 *Update 1:*
 
 As it turns out, Raspberry pi I2C module has a hardware bug http://www.advamation.com/knowhow/raspberrypi/rpi-i2c-bug.html and there is no quick and dependable solution how to fix it. Since all the LED controller arduinos already do use their SPI output (ShiftPWM), the only real data bus I can use is I2C. So I decided to add one more arduino that will be connected over SPI to the raspberry pi and over I2C to the slave arduinos. This new arduino will be doing SPI->I2C relay. What it receives over SPI, it decodes where to send it and sends it over I2C.
+
+*Update 2:*
+
+Well, last setup is RaspberryPi -(master SPI slave)-(3.3Vto5VlevelConvertor)- Arduino(_Buffer_) -(master I2C slave)- Arduino(_controller_) - Arduino(_controller_) - Arduino(_controller_). This way it all works just fine and we get around that raspberry i2c hardware bug.
