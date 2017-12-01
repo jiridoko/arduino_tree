@@ -12,49 +12,49 @@ class controller(object):
         self.led = led_master()
         self.led.start()
         self.ani = animator(self.led, self.s)
-        self._change_mode(self._getstr("mode"))
+        self._change_animation(self._getstr("animation"))
 
-        self.DEFAULT_MODE = "off"
+        self.DEFAULT_ANIMATION = "off"
 
-        self.MODE_LIST = [ ("off", "OFF"),
+        self.ANIMATION_LIST = [ ("off", "OFF"),
                       ("snake", "Snake"),
                       ("rand", "Random"),
                       ("snow", "Snow"),
                       ("direct", "Direct"),
-                      ("low", "Low mode"),
+                      ("low", "Low animation"),
                     ]
 
     def _getstr(self, name):
         try:
             i = str(self.s.get_value(name))
             if i is None:
-                if name == "mode":
-                    self.s.set_value("mode", self.DEFAULT_MODE)
+                if name == "animation":
+                    self.s.set_value("animation", self.DEFAULT_ANIMATION)
             return i
         except ValueError:
             return None
 
-    def _change_mode(self, mode_name):
-        mode = mode_name
-        if mode_name == "None":
-            mode = "off"
+    def _change_animation(self, animation_name):
+        animation = animation_name
+        if animation_name == "None":
+            animation = "off"
         self.ani.stop_animation()
-        self.ani.set_animation(mode)
+        self.ani.set_animation(animation)
         self.ani.start_animation()
-        self.s.set_value("mode", mode)
+        self.s.set_value("animation", animation)
 
     def get_function_list(self):
         l = []
-        for identifier, name in self.MODE_LIST:
-            l.append(('button', name, 'Select', self.ani.get_animation_name() == identifier, "mode_"+identifier, None))
+        for identifier, name in self.ANIMATION_LIST:
+            l.append(('button', name, 'Select', self.ani.get_animation_name() == identifier, "animation_"+identifier, None))
         for identifier, name in self.ani.get_animation().get_argument_list():
             l.append(('plusminus', name+self.ani.get_animation().get_argument(identifier), None, None, "value_"+identifier+"_plus", "value_"+identifier+"_minus"))
         return l
 
     def api_call(self, call):
-        for identifier, name in self.MODE_LIST:
-            if "mode_"+identifier == call:
-                self._change_mode(identifier)
+        for identifier, name in self.ANIMATION_LIST:
+            if "animation_"+identifier == call:
+                self._change_animation(identifier)
                 break
         for identifier, name in self.ani.get_animation().get_argument_list():
             if "value_"+identifier+"_plus" == call:
