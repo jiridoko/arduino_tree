@@ -21,7 +21,6 @@ class controller(object):
                       ("rand", "Random"),
                       ("snow", "Snow"),
                       ("direct", "Direct"),
-                      ("low", "Low animation"),
                     ]
 
     def _getstr(self, name):
