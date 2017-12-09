@@ -15,7 +15,7 @@ class animation(Thread):
         self.RAMP_UP_MAX = self.led.CONST_MAX_INTENSITY
         self.CALM_DOWN_MIN = 1
         self.CALM_DOWN_MAX = self.led.CONST_MAX_INTENSITY
-        self.RETENTION_MIN = 1
+        self.RETENTION_MIN = 0
         self.RETENTION_MAX = 1000
         
         if not blank_args:
