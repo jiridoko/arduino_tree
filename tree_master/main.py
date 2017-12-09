@@ -13,7 +13,7 @@ control = mode()
 
 @app.route('/')
 def index():
-    return render_template('index.html', function_list=control.get_function_list(), mode_list=control.get_mode_list())
+    return render_template('index.html', animation_list=control.get_animation_list(), argument_list=control.get_argument_list(), mode_list=control.get_mode_list())
 
 @app.route('/static/<path:path>')
 def serve_static(path):

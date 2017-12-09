@@ -20,7 +20,7 @@ class mode(object):
                       ("snow", "Snow"),
                     ]
 
-        self.MODE_COUNT = 5
+        self.MODE_COUNT = 4
         self.current_mode = int(self.s.get_value("mode", default=-1))
         self.change_mode(self.current_mode)
 
@@ -56,17 +56,22 @@ class mode(object):
 			# {% for mode_name, mode_id, active in mode_list %}
         ret = [('-1', 'Off', 1 if self.current_mode == -1 else 0)]
         ret+= [('-2', 'Direct', 1 if self.current_mode == -2 else 0)]
-        ret+= [(x, x, 1 if self.current_mode == x else 0) for x in range(self.MODE_COUNT)]
+        ret+= [(x, x+1, 1 if self.current_mode == x else 0) for x in range(self.MODE_COUNT)]
         return ret
 
     def get_animation_list(self):
         return self.ANIMATION_LIST
 
-    def get_function_list(self):
+    def get_animation_list(self):
         l = []
         if self.current_mode >= 0:
             for identifier, name in self.ANIMATION_LIST:
                 l.append(('button', name, 'Select', self.ani.get_animation_name() == identifier, identifier, None))
+        return l
+
+    def get_argument_list(self):
+        l = []
+        if self.current_mode >= 0:
             for identifier, name in self.ani.get_animation().get_argument_list():
                 l.append(('plusminus', str(name)+str(self.ani.get_animation().get_argument(str(identifier))), None, None, str(identifier)+"_plus", str(identifier)+"_minus"))
         return l
