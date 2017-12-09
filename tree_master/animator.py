@@ -4,11 +4,10 @@ from threading import Thread
 import importlib
 
 class animator(object):
-    def __init__(self, led, storage):
+    def __init__(self, led):
         self.animation = None
         self.name = None
         self.led = led
-        self.storage = storage
 
     # sets animation, returns true if successful
     def set_animation(self, animation_name):
@@ -16,7 +15,7 @@ class animator(object):
             self.stop_animation()
             return self.animation is not None
         a = __import__("animations."+animation_name, globals(), locals(), [], 0)
-        self.animation = getattr(getattr(a, animation_name), animation_name)(self.led, self.storage)
+        self.animation = getattr(getattr(a, animation_name), animation_name)(self.led)
         self.name = animation_name
         return self.animation is not None
 

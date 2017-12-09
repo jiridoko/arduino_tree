@@ -4,8 +4,8 @@ import base64
 from . import __animation
 
 class direct(__animation.animation):
-    def __init__(self, led, storage):
-        super(direct, self).__init__(led, storage, "direct", blank_args=True)
+    def __init__(self, led):
+        super(direct, self).__init__(led, "direct", blank_args=True)
     def run(self):
         pass
     def direct_call(self, data):
