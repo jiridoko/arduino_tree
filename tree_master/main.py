@@ -6,22 +6,32 @@ from flask import redirect
 from flask import abort
 import logging
 from logging.handlers import RotatingFileHandler
-from controller import controller
+from mode import mode
 
 app = Flask(__name__, static_url_path='')
-control = controller()
+control = mode()
 
 @app.route('/')
 def index():
-    return render_template('index.html', function_list=control.get_function_list())
+    return render_template('index.html', function_list=control.get_function_list(), mode_list=control.get_mode_list())
 
 @app.route('/static/<path:path>')
 def serve_static(path):
     return send_from_directory('static', path)
 
-@app.route('/api/<path:path>/')
+@app.route('/animation/<path:path>/')
+def animation(path):
+    control.animation_call(path)
+    return redirect("/", code=302)
+
+@app.route('/arg/<path:path>/')
 def button(path):
-    control.api_call(path)
+    control.arg_call(path)
+    return redirect("/", code=302)
+
+@app.route('/modes/<path:path>/')
+def mode(path):
+    control.mode_call(path)
     return redirect("/", code=302)
     
 @app.route('/direct/<path:path>/')

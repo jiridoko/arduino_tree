@@ -5,8 +5,8 @@ import time
 from . import __animation
 
 class snake(__animation.animation):
-    def __init__(self, led, storage):
-        super(snake, self).__init__(led, storage, "snake")
+    def __init__(self, led):
+        super(snake, self).__init__(led, "snake")
         self.initialize_argument("speed", "Speed: ", default_value=20)
         self.sum = 0.00
         self.count = 0
