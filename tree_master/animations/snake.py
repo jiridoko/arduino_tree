@@ -15,7 +15,9 @@ class snake(__animation.animation):
     def run(self):
         while self.enabled:
             for i in range(self.led.CONST_LED_COUNT):
-                if i >= self.position and i <= self.position+int(self.get_argument("length_snake")):
+                p=self.position
+                l=int(self.get_argument("length_snake"))
+                if (i >= p and i <= p+l) or (i < p and i < ((p+l)%self.led.CONST_LED_COUNT) and (p+l)>self.led.CONST_LED_COUNT):
                     self.led.get_diode(i).set_soft(red=255, green=0, blue=0, steps=int(self.get_argument("transition_snake")), intensity=30)
                 else:
                     self.led.get_diode(i).set_soft(red=0, green=255, blue=0, steps=int(self.get_argument("transition_snake")), intensity=30)
