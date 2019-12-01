@@ -15,6 +15,7 @@ class led_master(Thread):
         self.diodes = self.__initialise_diodes()
         self.delay = delay
         self.updating = True
+        self.brightness = 255
         self.c = 0
 
     def __initialise_diodes(self):
@@ -29,6 +30,14 @@ class led_master(Thread):
 
     def set_updating(self, value):
         self.updating = value
+
+    def set_brightness(self, b):
+        self.brightness = int(b)
+        for i in range(self.CONST_LED_COUNT):
+            self.diodes[i].set_soft(intensity=b, steps=10)
+
+    def get_brightness(self):
+        return int(self.brightness)
 
     def get_diode(self, diode_id):
         if diode_id < self.CONST_LED_COUNT:

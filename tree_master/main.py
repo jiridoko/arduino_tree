@@ -13,7 +13,7 @@ control = mode()
 
 @app.route('/')
 def index():
-    return render_template('index.html', animation_list=control.get_animation_list(), argument_list=control.get_argument_list(), mode_list=control.get_mode_list())
+    return render_template('index.html', animation_list=control.get_animation_list(), argument_list=control.get_argument_list(), mode_list=control.get_mode_list(), brightness=str(control.get_brightness()))
 
 @app.route('/static/<path:path>')
 def serve_static(path):
@@ -33,6 +33,11 @@ def button(path):
 def mode(path):
     control.mode_call(path)
     return redirect("/", code=302)
+
+@app.route('/brightness/<path:path>/', methods=['POST'])
+def brightness(path):
+    control.set_brightness(path)
+    return ('', 204)
     
 @app.route('/direct/<path:path>/')
 def direct(path):

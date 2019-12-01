@@ -12,7 +12,10 @@ class Colour(object):
         self.diff_green = 0
         self.diff_blue = 0
         self.diff_intensity = 0
-        self.outstanding_steps = 0
+        self.outstanding_steps_r = 0
+        self.outstanding_steps_g = 0
+        self.outstanding_steps_b = 0
+        self.outstanding_steps_i = 0
         self.semaphore = Semaphore()
     def __bool__(self):
         if self.intensity == 0 or (self.red == 0 and self.green == 0 and self.blue == 0):
@@ -50,33 +53,53 @@ class Colour(object):
         with self.semaphore:
             if red is not None:
                 self.red = __byte_safe(red)
+                self.diff_red = 0
+                self.outstending_steps_r = 0
             if green is not None:
                 self.green = __byte_safe(green)
+                self.diff_green = 0
+                self.outstending_steps_g = 0
             if blue is not None:
                 self.blue = __byte_safe(blue)
+                self.diff_blue = 0
+                self.outstending_steps_b = 0
             if intensity is not None:
                 self.intensity = __byte_safe(intensity)
+                self.diff_intensity = 0
+                self.outstending_steps_i = 0
     def set_soft(self, red=None, green=None, blue=None, intensity=None, steps=0):
         with self.semaphore:
             if steps < 0:
                 return
             if red is not None:
                 self.diff_red = (red-(self.red*1.0))/(steps+1)
+                self.outstanding_steps_r = steps
             if green is not None:
                 self.diff_green = (green-(self.green*1.0))/(steps+1)
+                self.outstanding_steps_g = steps
             if blue is not None:
                 self.diff_blue = (blue-(self.blue*1.0))/(steps+1)
+                self.outstanding_steps_b = steps
             if intensity is not None:
                 self.diff_intensity = (intensity-(self.intensity*1.0))/(steps+1)
-            self.outstanding_steps = steps
+                self.outstanding_steps_i = steps
     def update(self):
         with self.semaphore:
-            if self.outstanding_steps > 0:
+            if self.outstanding_steps_r > 0:
                 self.red+=self.diff_red
+                self.outstanding_steps_r-=1
+
+            if self.outstanding_steps_g > 0:
                 self.green+=self.diff_green
+                self.outstanding_steps_g-=1
+
+            if self.outstanding_steps_b > 0:
                 self.blue+=self.diff_blue
+                self.outstanding_steps_b-=1
+
+            if self.outstanding_steps_i > 0:
                 self.intensity+=self.diff_intensity
-                self.outstanding_steps=self.outstanding_steps-1
+                self.outstanding_steps_i-=1
 
 if __name__ == "__main__":
     c1=Colour()

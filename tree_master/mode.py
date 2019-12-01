@@ -15,14 +15,16 @@ class mode(object):
 
         self.DEFAULT_ANIMATION = "off"
 
-        self.ANIMATION_LIST = [ ("snake", "Snake"),
+        self.ANIMATION_LIST = [ ("red_green", "Red&Green"),
                       ("rand", "Random"),
                       ("snow", "Snow"),
+                      ("rainbow", "Rainbow"),
                     ]
 
         self.MODE_COUNT = 4
         self.current_mode = int(self.s.get_value("mode", default=-1))
         self.change_mode(self.current_mode)
+        self.led.set_brightness(int(self.s.get_value("brightness", default=30)))
 
     def _getstr(self, name):
         try:
@@ -58,6 +60,13 @@ class mode(object):
         ret+= [('-2', 'Direct', 1 if self.current_mode == -2 else 0)]
         ret+= [(x, x+1, 1 if self.current_mode == x else 0) for x in range(self.MODE_COUNT)]
         return ret
+
+    def set_brightness(self, b):
+        self.s.set_value("brightness", str(b))
+        self.led.set_brightness(int(b))
+
+    def get_brightness(self):
+        return self.led.get_brightness()
 
     def get_animation_list(self):
         return self.ANIMATION_LIST

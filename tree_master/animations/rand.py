@@ -14,7 +14,7 @@ class rand(__animation.animation):
         while self.enabled:
             for x in range(int(self.get_argument("count"))):
                 i = randint(0,self.led.CONST_LED_COUNT-1)
-                self.led.get_diode(i).set_soft(red=randint(0,0xFF), green=randint(0,0xFF), blue=randint(0,0xFF), intensity=50, steps=int(self.get_argument("transition")))
+                self.led.get_diode(i).set_soft(red=randint(0,0xFF), green=randint(0,0xFF), blue=randint(0,0xFF), intensity=self.led.get_brightness(), steps=int(self.get_argument("transition")))
                 sleep(1.00/int(self.get_argument("speed")))
                 if not self.enabled:
                     break
