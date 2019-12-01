@@ -3,28 +3,13 @@
 from threading import Thread
 
 class animation(Thread):
-    def __init__(self, led, name, blank_args=False):
+    def __init__(self, led, name):
         super(animation, self).__init__()
         self.led = led
         self.enabled = True
         self.arguments = []
         self.animation_name = name
         
-        self.RAMP_UP_MIN = 1
-        self.RAMP_UP_MAX = self.led.CONST_MAX_INTENSITY
-        self.CALM_DOWN_MIN = 1
-        self.CALM_DOWN_MAX = self.led.CONST_MAX_INTENSITY
-        self.RETENTION_MIN = 0
-        self.RETENTION_MAX = 1000
-        
-        if not blank_args:
-            self.initialize_argument("ramp_up", "Ramp up: ", default_value=20)
-            self.led.set_ramp_up_speed(self.get_argument("ramp_up"))
-            self.initialize_argument("calm_down", "Calm down: ", default_value=2)
-            self.led.set_calm_down_speed(self.get_argument("calm_down"))
-            self.initialize_argument("retention", "Retention: ", default_value=10)
-            self.led.set_retention(self.get_argument("retention"))
-
     def disable(self):
         self.enabled = False
 
@@ -36,18 +21,6 @@ class animation(Thread):
 
     def set_argument(self, arg_name, arg_value):
         if arg_name in self.get_argument_ids():
-            if arg_name == "ramp_up" and int(arg_value) >= self.RAMP_UP_MIN and int(arg_value) <= self.RAMP_UP_MAX:
-                self.led.set_ramp_up_speed(int(arg_value))
-            elif arg_name == "ramp_up":
-                return
-            elif arg_name == "calm_down" and int(arg_value) >= self.CALM_DOWN_MIN and int(arg_value) <= self.CALM_DOWN_MAX:
-                self.led.set_calm_down_speed(int(arg_value))
-            elif arg_name == "calm_down":
-                return
-            elif arg_name == "retention" and int(arg_value) >= self.RETENTION_MIN and int(arg_value) <= self.RETENTION_MAX:
-                self.led.set_retention(int(arg_value))
-            elif arg_name == "retention":
-                return
             self._store_argument(arg_name, arg_value)
 
     def _store_argument(self, arg_name, arg_value):

@@ -6,9 +6,15 @@ from random import *
 
 class rand(__animation.animation):
     def __init__(self, led):
-        super(rand, self).__init__(led, "rand")
+        super(rand, self).__init__(led, "random")
+        self.initialize_argument("speed", "Speed: ", default_value=20)
+        self.initialize_argument("count", "Count: ", default_value=1)
+        self.initialize_argument("transition", "Transition time: ", default_value=30)
     def run(self):
         while self.enabled:
-            i = randint(0,119)
-            self.led.set_led_value(i, self.led.CONST_MAX_INTENSITY)
-            sleep(0.05)
+            for x in range(int(self.get_argument("count"))):
+                i = randint(0,self.led.CONST_LED_COUNT-1)
+                self.led.get_diode(i).set_soft(red=randint(0,0xFF), green=randint(0,0xFF), blue=randint(0,0xFF), intensity=50, steps=int(self.get_argument("transition")))
+                sleep(1.00/int(self.get_argument("speed")))
+                if not self.enabled:
+                    break

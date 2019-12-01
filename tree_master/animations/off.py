@@ -4,6 +4,6 @@ from . import __animation
 
 class off(__animation.animation):
     def __init__(self, led):
-        super(off, self).__init__(led, "off", blank_args=True)
+        super(off, self).__init__(led, "off")
     def run(self):
         pass
