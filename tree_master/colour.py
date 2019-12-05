@@ -52,19 +52,19 @@ class Colour(object):
     def set(self, red=None, green=None, blue=None, intensity=None):
         with self.semaphore:
             if red is not None:
-                self.red = __byte_safe(red)
+                self.red = self.__byte_safe(red)
                 self.diff_red = 0
                 self.outstending_steps_r = 0
             if green is not None:
-                self.green = __byte_safe(green)
+                self.green = self.__byte_safe(green)
                 self.diff_green = 0
                 self.outstending_steps_g = 0
             if blue is not None:
-                self.blue = __byte_safe(blue)
+                self.blue = self.__byte_safe(blue)
                 self.diff_blue = 0
                 self.outstending_steps_b = 0
             if intensity is not None:
-                self.intensity = __byte_safe(intensity)
+                self.intensity = self.__byte_safe(intensity)
                 self.diff_intensity = 0
                 self.outstending_steps_i = 0
     def set_soft(self, red=None, green=None, blue=None, intensity=None, steps=0):

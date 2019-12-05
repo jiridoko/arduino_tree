@@ -19,6 +19,7 @@ class mode(object):
                       ("rand", "Random"),
                       ("snow", "Snow"),
                       ("rainbow", "Rainbow"),
+                      ("max", "Max"),
                     ]
 
         self.MODE_COUNT = 4

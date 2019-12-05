@@ -3,6 +3,7 @@ from flask import Flask
 from flask import render_template
 from flask import send_from_directory
 from flask import redirect
+from flask import request
 from flask import abort
 import logging
 from logging.handlers import RotatingFileHandler
@@ -39,11 +40,15 @@ def brightness(path):
     control.set_brightness(path)
     return ('', 204)
     
-@app.route('/direct/<path:path>/')
-def direct(path):
-    if control.direct_call(path):
-        return ('', 204)
-    else:
+@app.route('/direct', methods=['POST'])
+def direct():
+    try:
+        data=request.args['d']
+        if control.direct_call(data):
+            return ('', 204)
+        else:
+            return abort(404)
+    except:
         return abort(404)
 
 if __name__ == '__main__':

@@ -40,7 +40,7 @@ class led_master(Thread):
         return int(self.brightness)
 
     def get_diode(self, diode_id):
-        if diode_id < self.CONST_LED_COUNT:
+        if int(diode_id) < self.CONST_LED_COUNT:
             return self.diodes[diode_id]
         else:
             return None
