@@ -19,7 +19,10 @@ class mode(object):
                       ("rand", "Random"),
                       ("snow", "Snow"),
                       ("rainbow", "Rainbow"),
-                      ("max", "Max"),
+                      ("blue", "Blue"),
+                      ("red", "Red"),
+                      ("yellow", "Yellow"),
+                      ("purple", "Purple"),
                     ]
 
         self.MODE_COUNT = 4
@@ -126,6 +129,10 @@ class mode(object):
             self.change_argument([identifier for identifier in self.get_argument_names() if identifier+"_plus" == call][0], 1)
         elif call in [identifier+"_minus" for identifier in self.get_argument_names()]:
             self.change_argument([identifier for identifier in self.get_argument_names() if identifier+"_minus" == call][0], -1)
+        elif call in [identifier+"_plus10" for identifier in self.get_argument_names()]:
+            self.change_argument([identifier for identifier in self.get_argument_names() if identifier+"_plus10" == call][0], 10)
+        elif call in [identifier+"_minus10" for identifier in self.get_argument_names()]:
+            self.change_argument([identifier for identifier in self.get_argument_names() if identifier+"_minus10" == call][0], -10)
 
     def animation_call(self, call):
         self.change_animation(str(call))
