@@ -16,6 +16,14 @@ class animation(Thread):
     def get_name(self):
         return self.animation_name
 
+    def bytesafe(self, number):
+        if int(number) > 255:
+            return 255
+        elif int(number) < 0:
+            return 0
+        else:
+            return int(number)
+
     def initialize_argument(self, arg_name, human_readable, default_value=None, value=None):
         self.arguments.append((arg_name, human_readable, default_value if value is None else value))
 
@@ -34,6 +42,10 @@ class animation(Thread):
 
     def argument_exists(self, arg_name):
         return arg_name in [identifier for identifier, name, value in self.arguments]
+
+    def parse_colour(self, c):
+        red, green, blue = tuple(int(c[i:i+2], 16) for i in (0, 2, 4))
+        return (red, green, blue)
 
     def get_argument(self, arg_name):
         if arg_name in self.get_argument_ids():

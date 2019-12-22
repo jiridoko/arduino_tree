@@ -6,7 +6,7 @@ import ws2812
 from colour import Colour
 
 class led_master(Thread):
-    CONST_LED_COUNT = 150
+    CONST_LED_COUNT = 149
 
     def __init__(self, delay=0):
         super(led_master, self).__init__()

@@ -9,8 +9,6 @@ class rainbow(__animation.animation):
         super(rainbow, self).__init__(led, "rainbow")
         self.initialize_argument("speed_rainbow", "Speed: ", default_value=20)
         self.initialize_argument("transition_rainbow", "Transition time: ", default_value=100)
-        self.initialize_argument("length_rainbow", "Length: ", default_value=30)
-        self.initialize_argument("direction_rainbow", "Direction: ", default_value=0)
         self.initialize_argument("increment_rainbow", "Increment: ", default_value=10)
         self.red=255
         self.green=0
@@ -67,19 +65,9 @@ class rainbow(__animation.animation):
     def run(self):
         while self.enabled:
             for i in range(self.led.CONST_LED_COUNT):
-                p=self.position
-                l=int(self.get_argument("length_rainbow"))
-                self.count+=1
-                self.count=self.count%int(self.get_argument("length_rainbow"))
-                if self.count == 0:
-                    self.new_colour()
                 self.led.get_diode(i).set_soft(red=self.red, green=self.green, blue=self.blue, steps=int(self.get_argument("transition_rainbow")), intensity=self.led.get_brightness())
-                sleep_length = 1.00 / int(self.get_argument("speed_rainbow"))
-                sleep(sleep_length)
-                if not self.enabled:
-                    break
-                if int(self.get_argument("direction_rainbow"))%2:
-                    self.position+=1
-                else:
-                    self.position-=1
-                self.position%=self.led.CONST_LED_COUNT
+            sleep_length = 1.00 / int(self.get_argument("speed_rainbow"))
+            sleep(sleep_length)
+            self.new_colour()
+            if not self.enabled:
+                break

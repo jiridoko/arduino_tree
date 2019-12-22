@@ -19,10 +19,15 @@ class mode(object):
                       ("rand", "Random"),
                       ("snow", "Snow"),
                       ("rainbow", "Rainbow"),
+                      ("two_colours", "2 Colours"),
                       ("blue", "Blue"),
                       ("red", "Red"),
                       ("yellow", "Yellow"),
                       ("purple", "Purple"),
+                      ("orange", "Orange"),
+                      ("green", "Green"),
+                      ("white", "White"),
+                      ("custom_colour", "Custom"),
                     ]
 
         self.MODE_COUNT = 4
@@ -62,7 +67,11 @@ class mode(object):
 			# {% for mode_name, mode_id, active in mode_list %}
         ret = [('-1', 'Off', 1 if self.current_mode == -1 else 0)]
         ret+= [('-2', 'Direct', 1 if self.current_mode == -2 else 0)]
-        ret+= [(x, x+1, 1 if self.current_mode == x else 0) for x in range(self.MODE_COUNT)]
+        ret+= [('0', 'Mom', 1 if self.current_mode == 0 else 0)]
+        ret+= [('1', 'Dad', 1 if self.current_mode == 1 else 0)]
+        ret+= [('2', 'Premek', 1 if self.current_mode == 2 else 0)]
+        ret+= [('3', 'Jiri', 1 if self.current_mode == 3 else 0)]
+        #ret+= [(x, x+1, 1 if self.current_mode == x else 0) for x in range(self.MODE_COUNT)]
         return ret
 
     def set_brightness(self, b):
@@ -86,7 +95,10 @@ class mode(object):
         l = []
         if self.current_mode >= 0:
             for identifier, name in self.ani.get_animation().get_argument_list():
-                l.append(('plusminus', str(name)+str(self.ani.get_animation().get_argument(str(identifier))), None, None, str(identifier)+"_plus", str(identifier)+"_minus"))
+                if str(identifier).startswith("cp_"):
+                    l.append(('colour', str(name), str(self.ani.get_animation().get_argument(str(identifier))), None, identifier, None))
+                else:
+                    l.append(('plusminus', str(name)+str(self.ani.get_animation().get_argument(str(identifier))), None, None, str(identifier)+"_plus", str(identifier)+"_minus"))
         return l
 
     def change_argument(self, arg_name, arg_diff):
@@ -112,6 +124,11 @@ class mode(object):
                 animation = self.s.get_value("animation", section=str(mode_number), default="off")
             self.current_mode = mode_number
             self._change_animation(animation, store=False)
+
+    def colour_call(self, name, colour):
+        if self.ani.get_animation().argument_exists(name):
+            self.ani.get_animation().set_argument(name, str(colour))
+            self.s.set_value(name, str(colour), section=str(self.current_mode))
 
     def direct_call(self, data):
         if self.current_mode == -2:

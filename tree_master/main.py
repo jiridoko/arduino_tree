@@ -30,6 +30,13 @@ def button(path):
     control.arg_call(path)
     return redirect("/", code=302)
 
+@app.route('/colour', methods=['POST'])
+def colour_call():
+    colour=request.args['c']
+    name=request.args['n']
+    control.colour_call(name, colour)
+    return ('', 204)
+
 @app.route('/modes/<path:path>/')
 def mode(path):
     control.mode_call(path)

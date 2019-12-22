@@ -7,23 +7,12 @@ from random import *
 class red(__animation.animation):
     def __init__(self, led):
         super(red, self).__init__(led, "red")
-        self.initialize_argument("red_red", "Red: ", default_value=255)
-        self.initialize_argument("red_green", "Green: ", default_value=0)
-        self.initialize_argument("red_blue", "Blue: ", default_value=0)
+        self.initialize_argument("cp_red_colour", "Colour: ", default_value="ff0000")
         self.reset()
 
-    def bytesafe(self, number):
-        if int(number) > 255:
-            return 255
-        elif int(number) < 0:
-            return 0
-        else:
-            return int(number)
-
     def reset(self):
-        red  =self.bytesafe(self.get_argument("red_red"))
-        green=self.bytesafe(self.get_argument("red_green"))
-        blue =self.bytesafe(self.get_argument("red_blue"))
+        c=str(self.get_argument("cp_red_colour"))
+        red, green, blue = self.parse_colour(c)
         for i in range(self.led.CONST_LED_COUNT):
             self.led.get_diode(i).set_soft(red=red, green=green, blue=blue, intensity=self.led.get_brightness(), steps=20)
 

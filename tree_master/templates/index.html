@@ -60,6 +60,14 @@
 						<td>{{ nameL }}</td>
 						<td>{{ nameR }}</td>
 					</tr>
+				{% elif type=="colour" %}
+					<tr>
+						<td>{{ nameL }}</td>
+						<td>
+							<!--<input type="text" id="{{ idPlus }}" name="color" value="{{ nameR }}" />-->
+							<div id="{{ idPlus }}" style="float: right;"></div>
+						</td>
+					</tr>
 				{% endif %}
 			{% endfor %}
 		</tbody>

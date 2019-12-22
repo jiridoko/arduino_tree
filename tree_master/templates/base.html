@@ -37,6 +37,26 @@
 
   <script src="/static/jquery.js"></script>
 
+  <script type="text/javascript" src="/static/farbtastic/farbtastic.js"></script>
+  <link rel="stylesheet" href="/static/farbtastic/farbtastic.css" type="text/css" />
+
+  <script type="text/javascript" charset="utf-8">
+   $(document).ready(function() {
+     {% for type, nameL, nameR, highlighted, idPlus, idMinus in argument_list %}
+         {% if type=="colour" %}
+             $('#{{ idPlus }}').farbtastic('#{{ idPlus }}');
+             $('#{{ idPlus }}').css("background-color", "#000000");
+             var picker_{{ idPlus }} = $.farbtastic("#{{ idPlus }}");
+             picker_{{ idPlus }}.setColor("#{{ nameR }}");
+             picker_{{ idPlus }}.linkTo(color_{{ idPlus }});
+             function color_{{ idPlus }}(color) {
+		     $.post('/colour?n={{ idPlus }}&c='+color.substring(1, color.length));
+	     }
+         {% endif %}
+     {% endfor %}
+   });
+  </script>
+
   <style>
   .slidecontainer {
     width: 100%;
