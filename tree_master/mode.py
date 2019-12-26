@@ -28,6 +28,7 @@ class mode(object):
                       ("green", "Green"),
                       ("white", "White"),
                       ("custom_colour", "Custom"),
+                      ("fireworks", "Fireworks"),
                     ]
 
         self.MODE_COUNT = 4
