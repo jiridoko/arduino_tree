@@ -20,6 +20,7 @@ class mode(object):
                       ("snow", "Snow"),
                       ("rainbow", "Rainbow"),
                       ("two_colours", "2 Colours"),
+                      ("three_colours", "3 Colours"),
                       ("blue", "Blue"),
                       ("red", "Red"),
                       ("yellow", "Yellow"),
